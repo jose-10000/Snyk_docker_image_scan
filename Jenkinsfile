@@ -33,7 +33,7 @@ pipeline{
                                     }
             }
             post{
-                failure {
+                always {
                     nodejs(nodeJSInstallationName: 'node-18-15'){
                         sh 'npm audit > ${NPM_REPORT_FILE}'
                         withCredentials([
