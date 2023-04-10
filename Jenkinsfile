@@ -49,7 +49,9 @@ pipeline{
 //                }
 //        }
         }
-		stage('NPM Audit'){
+		stage('NPM_Audit'){
+			
+		steps{
 			nodejs (nodeJSInstallationName: 'node-18-15'){
             sh 'npm audit > ${NPM_REPORT_FILE}'
             withCredentials([
@@ -61,6 +63,7 @@ pipeline{
 				echo 'Se ha creado un issue en el repositorio'
                 """
 			}
+		}
 		}
 		}
 		stage('Build') {
