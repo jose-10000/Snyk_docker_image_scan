@@ -25,15 +25,19 @@ pipeline{
 			}
 		}
 
-		stage('Scan') {
-
-			steps {
-				echo 'Scanning..'
-				script {
-					snykSecurity severity: 'critical', snykInstallation: 'Snyk-grupo3', snykTokenId: '${SKYK_TOKEN}', targetFile: 'jose10000/devscanned-g3:v1.$BUILD_NUMBER'
-				}
-			}
-		}
+    stage('Test') {
+        steps {
+        echo 'Testing...'
+        snykSecurity(
+            snykInstallation: 'Snyk-grupo3',
+            snykTokenId: 'snykID',
+          // place other parameters here
+			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+        )
+		if (snykReport != 0) {
+		error('Snyk found critical vulnerabilities')
+        }
+    }
 
 		stage('Login') {
 
