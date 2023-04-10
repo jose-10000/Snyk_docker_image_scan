@@ -4,7 +4,7 @@ pipeline{
 		DOCKERHUB_CREDENTIALS=credentials('jenkins-dockerhub')
 		REGISTRY = "jose10000/devscanned-g3"
 		DockerImage = ''
-		SKYK_TOKEN = credentials('snykID')
+		SKYK_TOKEN=credentials('snykID')
 	}
 
 	agent any
