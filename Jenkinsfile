@@ -2,7 +2,7 @@ pipeline{
 
 	environment {
 		DOCKERHUB_CREDENTIALS=credentials('jenkins-dockerhub')
-		Docker_REGISTRY = "jose10000/dev-grupo3-scanned:v1.$BUILD_NUMBER"
+		Docker_REGISTRY = "jose10000/dev-grupo3-scanned"
 		DockerImage = ''
 		SNYK_TOKEN=credentials('snykID')
 	}
@@ -21,7 +21,7 @@ pipeline{
 
 			steps {
 				echo 'Building..'
-				sh 'docker build -t $Docker_REGISTRY .'
+				sh 'docker build -t $Docker_REGISTRY:v1.$BUILD_NUMBER .'
 			}
 		}
 
@@ -32,7 +32,7 @@ pipeline{
 				script {
 					snykSecurity severity: 'critical', snykInstallation: 'snyk', snykToken: snykID
 					def snykReport = sh(
-						script: 'snyk container test $Docker_REGISTRY --severity-threshold=critical',
+						script: 'snyk container test $Docker_REGISTRY:v1.$BUILD_NUMBER --severity-threshold=critical',
 						returnStatus: true)
 
 				echo "Snyk report: ${snykReport}"
@@ -52,7 +52,7 @@ pipeline{
 		stage('Push') {
 
 			steps {
-				sh 'docker push Docker_REGISTRY'
+				sh 'docker push Docker_REGISTRY:v1.$BUILD_NUMBER'
 			}
 		}
 
@@ -61,7 +61,7 @@ pipeline{
         always {
         // Se eliminan las imagenes creadas
             echo 'Se elimina la imagen creada'
-            sh "docker rmi $Docker_REGISTRY"
+            sh "docker rmi $Docker_REGISTRY:v1.$BUILD_NUMBER"
         }
     }
 }
