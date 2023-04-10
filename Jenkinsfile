@@ -35,7 +35,7 @@ pipeline{
 			failOnError: 'false',
 			failOnIssues: 'false',
           // place other parameters here
-			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+			additionalArguments: '--docker $REGISTRY'
         )
         }
     }
@@ -50,7 +50,7 @@ pipeline{
 		stage('Push') {
 
 			steps {
-				sh 'docker push jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+				sh 'docker push $REGISTRY'
 			}
 		}
 
