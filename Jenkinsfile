@@ -4,6 +4,7 @@ pipeline{
 		DOCKERHUB_CREDENTIALS=credentials('jenkins-dockerhub')
 		REGISTRY = "jose10000/devscanned-g3"
 		DockerImage = ''
+		SKYK_TOKEN = credentials('snykID')
 	}
 
 	agent any
@@ -21,6 +22,14 @@ pipeline{
 			steps {
 				echo 'Building..'
 				sh 'docker build -t jose10000/devscanned-g3:v1.$BUILD_NUMBER .'
+			}
+		}
+
+		stage('Scan') {
+
+			steps {
+				echo 'Scanning..'
+				sh 'docker run --rm -e SNYK_TOKEN=$SKYK_TOKEN -v $(pwd):/project snyk/snyk-cli test --docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
 			}
 		}
 
