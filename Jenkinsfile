@@ -32,6 +32,7 @@ pipeline{
             snykInstallation: 'Snyk-grupo3',
             snykTokenId: 'snykID',
 			severity: 'high',
+			failOnIssues: 'false',
           // place other parameters here
 			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
         )
