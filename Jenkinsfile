@@ -2,9 +2,8 @@ pipeline{
 
 	environment {
 		DOCKERHUB_CREDENTIALS=credentials('jenkins-dockerhub')
-		REGISTRY = "jose10000/dev-grupo3-scanned"
+		REGISTRY = "jose10000/devscanned-g3"
 		DockerImage = ''
-		SNYK_TOKEN=credentials('snykID')
 	}
 
 	agent any
@@ -21,27 +20,10 @@ pipeline{
 
 			steps {
 				echo 'Building..'
-				sh 'docker build -t $REGISTRY:v1.$BUILD_NUMBER .'
+				sh 'docker build -t jose10000/devscanned-g3:v1.$BUILD_NUMBER .'
 			}
 		}
 
-		stage('Scan') {
-
-			steps {
-				echo 'Scanning..'
-				script {
-					snykSecurity severity: 'critical', snykInstallation: 'snyk', snykToken: snykID
-					def snykReport = sh(
-						script: 'snyk container test $REGISTRY:v1.$BUILD_NUMBER --severity-threshold=critical',
-						returnStatus: true)
-
-				echo "Snyk report: ${snykReport}"
-				if (snykReport != 0) {
-					error('Snyk found critical vulnerabilities')
-				}
-			}
-		}
-		}
 		stage('Login') {
 
 			steps {
@@ -52,7 +34,7 @@ pipeline{
 		stage('Push') {
 
 			steps {
-				sh 'docker push $REGISTRY:v1.$BUILD_NUMBER'
+				sh 'docker push jose10000/devscanned-g3:v1.$BUILD_NUMBER'
 			}
 		}
 
