@@ -52,7 +52,7 @@ pipeline{
 //                }
 //        }
         }
-		Stage('NPM Audit')
+		stage('NPM Audit'){
 			steps {
 						nodejs(nodeJSInstallationName: 'node-18-15'){
                         sh 'npm audit > ${NPM_REPORT_FILE}'
@@ -67,7 +67,7 @@ pipeline{
 						}
 					}
 				}
-
+		}
 		stage('Build') {
 
 			steps {
