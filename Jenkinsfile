@@ -52,8 +52,7 @@ pipeline{
 		stage('NPM_Audit'){
 
 		steps{
-			nodejs (nodeJSInstallationName: 'node-18-15'){
-            sh 'npm audit > ${NPM_REPORT_FILE}'
+			sh 'npm audit > ${NPM_REPORT_FILE}'
             withCredentials([
                 usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
             ]){
@@ -62,7 +61,7 @@ pipeline{
                 gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
 				echo 'Se ha creado un issue en el repositorio'
                 """
-			}
+			
 		}
 		}
 		}
