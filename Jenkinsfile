@@ -6,7 +6,7 @@ pipeline{
 		DockerImage = ''
 		GITHUB_CREDENTIALS=credentials('github-jenkins')
 		ISSUE_TITLE = "$JOB_NAME $BUILD_DISPLAY_NAME falló"
-		NPM_ISSUE_FILE = "npm_issue_body.txt"
+		NPM_ISSUE_FILE = "npm_report_file.md"
 		URL_REPO = "https://github.com/jose-10000/Snyk_docker_image_scan.git"
 	//	SNYK_TOKEN=credentials('snykID') si usas esto da error
 	}
@@ -35,15 +35,13 @@ pipeline{
             post{
                 failure {
                     nodejs(nodeJSInstallationName: 'node-18-15'){
-                        sh "npm audit > ${NPM_ISSUE_FILE}"
+                        sh 'npm audit > ${NPM_REPORT_FILE}'
                         withCredentials([
                             usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
                         ]){
                             sh """
-                            echo ${GIT_TOKEN} > tmpToken.txt
-                            gh auth login --with-token < tmpToken.txt
-                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_ISSUE_FILE} -R ${URL_REPO}
-							echo > tmpToken.txt
+                            echo ${GIT_TOKEN} | gh auth login --with-token
+                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
 							echo 'Se ha creado un issue en el repositorio'
                             """
                         }    
