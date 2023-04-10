@@ -18,7 +18,7 @@ pipeline{
 		stage('gitclone') {
 			steps {
 				echo 'Cloning..'
-				git branch: 'main', url: '$URL_REPO'
+				git branch: 'main', url: ${URL_REPO}
 			}
 		}
 
