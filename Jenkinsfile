@@ -28,8 +28,9 @@ pipeline{
                     echo 'Realizando test antes de crear la imagen'
                     sh """
                     npm install
+					npm audit > npm_audit_report.txt
                     npm run test
-					npm audit > /tmp/npm_audit_report.txt
+
                     """
                                     }
             }
