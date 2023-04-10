@@ -29,7 +29,9 @@ pipeline{
 
 			steps {
 				echo 'Scanning..'
-				sh 'docker run --rm -e SNYK_TOKEN=$SKYK_TOKEN -v $(pwd):/project snyk/snyk-cli test --docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+				script {
+					snykSecurity severity: 'critical', snykInstallation: 'Snyk-grupo3', SKYK_TOKEN: 'snykID', targetFile: 'jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+				}
 			}
 		}
 
