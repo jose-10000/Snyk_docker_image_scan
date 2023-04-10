@@ -2,7 +2,7 @@ pipeline{
 
 	environment {
 		DOCKERHUB_CREDENTIALS=credentials('jenkins-dockerhub')
-		REGISTRY = "jose10000/devscanned-g3"
+		REGISTRY = "jose10000/devscanned-g3:v1.$BUILD_NUMBER"
 		DockerImage = ''
 	//	SNYK_TOKEN=credentials('snykID') si usas esto da error
 	}
@@ -21,7 +21,7 @@ pipeline{
 
 			steps {
 				echo 'Building..'
-				sh 'docker build -t jose10000/devscanned-g3:v1.$BUILD_NUMBER .'
+				sh 'docker build -t $REGISTRY .'
 			}
 		}
 
