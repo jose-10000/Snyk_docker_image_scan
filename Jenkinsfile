@@ -41,7 +41,7 @@ pipeline{
 				}
 			}
 		}
-
+		}
 		stage('Login') {
 
 			steps {
