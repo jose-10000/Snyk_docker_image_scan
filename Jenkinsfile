@@ -54,6 +54,7 @@ pipeline{
 		}
 
 	}
+	}
 //	post {
 //        always {
 //        // Se eliminan las imagenes creadas
