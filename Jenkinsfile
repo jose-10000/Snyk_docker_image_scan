@@ -13,7 +13,7 @@ pipeline{
 		stage('gitclone') {
 
 			steps {
-				git branch: 'main', url: 'https://github.com/jose-10000/dev-grupo3.git'
+				git branch: 'main', url: 'https://github.com/jose-10000/Snyk_docker_image_scan.git'
 			}
 		}
 
