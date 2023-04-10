@@ -29,12 +29,32 @@ pipeline{
                     sh """
                     npm install
                     npm run test
+					sh 'npm audit > ${NPM_REPORT_FILE}'
+
+
                     """
                                     }
             }
-            post{
-                always {
-                    nodejs(nodeJSInstallationName: 'node-18-15'){
+//            post{
+//                failure {
+//                    nodejs(nodeJSInstallationName: 'node-18-15'){
+//                        sh 'npm audit > ${NPM_REPORT_FILE}'
+//                        withCredentials([
+//                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
+//                        ]){
+//                            sh """
+//                            echo ${GIT_TOKEN} | gh auth login --with-token
+//                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+//							echo 'Se ha creado un issue en el repositorio'
+//                            """
+//                        }    
+//                    }
+//                }
+//        }
+        }
+		Stage('NPM Audit')
+			steps {
+						nodejs(nodeJSInstallationName: 'node-18-15'){
                         sh 'npm audit > ${NPM_REPORT_FILE}'
                         withCredentials([
                             usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
@@ -44,11 +64,9 @@ pipeline{
                             gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
 							echo 'Se ha creado un issue en el repositorio'
                             """
-                        }    
-                    }
-                }
-        }
-        }
+						}
+					}
+				}
 
 		stage('Build') {
 
