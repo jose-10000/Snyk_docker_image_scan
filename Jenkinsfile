@@ -4,7 +4,7 @@ pipeline{
 		DOCKERHUB_CREDENTIALS=credentials('jenkins-dockerhub')
 		REGISTRY = "jose10000/devscanned-g3"
 		DockerImage = ''
-	//	SNYK_TOKEN=credentials('snykID')
+	//	SNYK_TOKEN=credentials('snykID') si usas esto da error
 	}
 
 	agent any
@@ -12,7 +12,7 @@ pipeline{
 	stages {
 		stage('gitclone') {
 			steps {
-				echo '$SNYK_TOKEN'
+				echo 'Cloning..'
 				git branch: 'main', url: 'https://github.com/jose-10000/Snyk_docker_image_scan.git'
 			}
 		}
@@ -31,6 +31,7 @@ pipeline{
         snykSecurity(
             snykInstallation: 'Snyk-grupo3',
             snykTokenId: 'snykID',
+			severity: 'critical',
           // place other parameters here
 			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
         )
