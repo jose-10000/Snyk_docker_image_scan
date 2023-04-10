@@ -18,7 +18,7 @@ pipeline{
 		stage('gitclone') {
 			steps {
 				echo 'Cloning..'
-				git branch: 'main', url: ${URL_REPO}
+				git branch: 'main', url: 'https://github.com/jose-10000/Snyk_docker_image_scan.git'
 			}
 		}
 
