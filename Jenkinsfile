@@ -11,8 +11,8 @@ pipeline{
 
 	stages {
 		stage('gitclone') {
-			echo '$SNYK_TOKEN'
 			steps {
+				echo '$SNYK_TOKEN'
 				git branch: 'main', url: 'https://github.com/jose-10000/Snyk_docker_image_scan.git'
 			}
 		}
