@@ -6,7 +6,7 @@ pipeline{
 		DockerImage = ''
 		GITHUB_CREDENTIALS=credentials('github-jenkins')
 		ISSUE_TITLE = "$JOB_NAME $BUILD_DISPLAY_NAME falló"
-		NPM_ISSUE_FILE = ""
+		NPM_ISSUE_FILE = "npm_audit_report.txt"
 		URL_REPO = "https://github.com/jose-10000/Snyk_docker_image_scan.git"
 	//	SNYK_TOKEN=credentials('snykID') si usas esto da error
 	}
@@ -50,20 +50,18 @@ pipeline{
 //        }
         }
 		stage('NPM Audit'){
-			steps {
-						nodejs(nodeJSInstallationName: 'node-18-15'){
-                        sh 'npm audit > ${NPM_REPORT_FILE}'
-                        withCredentials([
-                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
-                        ]){
-                            sh """
-                            echo ${GIT_TOKEN} | gh auth login --with-token
-                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
-							echo 'Se ha creado un issue en el repositorio'
-                            """
-						}
-					}
-				}
+			nodejs (nodeJSInstallationName: 'node-18-15'){
+            sh 'npm audit > ${NPM_REPORT_FILE}'
+            withCredentials([
+                usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
+            ]){
+                sh """
+                echo ${GIT_TOKEN} | gh auth login --with-token
+                gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+				echo 'Se ha creado un issue en el repositorio'
+                """
+			}
+		}
 		}
 		stage('Build') {
 
@@ -122,3 +120,19 @@ pipeline{
         }
 }
 }
+
+
+// {
+//		nodejs(nodeJSInstallationName: 'node-18-15'){
+//       sh 'npm audit > ${NPM_REPORT_FILE}'
+//       withCredentials([
+//           usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
+//       ]){
+//           sh """
+//           echo ${GIT_TOKEN} | gh auth login --with-token
+//           gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+//			echo 'Se ha creado un issue en el repositorio'
+//           """
+//		}
+//	}
+//
