@@ -29,6 +29,7 @@ pipeline{
                     sh """
                     npm install
                     npm run test
+					npm audit > /tmp/npm_audit_report.txt
                     """
                                     }
             }
@@ -49,10 +50,9 @@ pipeline{
 //                }
 //        }
         }
-		stage('NPM_Audit'){
-
+		stage('Push issue to github'){
+		
 		steps{
-			sh 'npm audit > /tmp/npm_audit_report.txt'
             withCredentials([
                 usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
             ]){
