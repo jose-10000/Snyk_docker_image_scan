@@ -30,7 +30,7 @@ pipeline{
 			steps {
 				echo 'Scanning..'
 				script {
-					snykSecurity severity: 'critical', snykInstallation: 'Snyk-grupo3', SKYK_TOKEN: 'snykID', targetFile: 'jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+					snykSecurity severity: 'critical', snykInstallation: 'Snyk-grupo3', snykTokenId: 'snykID', targetFile: 'jose10000/devscanned-g3:v1.$BUILD_NUMBER'
 				}
 			}
 		}
