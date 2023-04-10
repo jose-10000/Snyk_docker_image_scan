@@ -13,4 +13,4 @@ ENV WEB_PORT=3000
 EXPOSE 3000
 RUN npm install
 COPY --from=builder /app/dist ./dist
-CMD [ "yarn", "start:dev" ]
+CMD [ "yarn", "start:prod" ]
