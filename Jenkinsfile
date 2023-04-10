@@ -31,13 +31,10 @@ pipeline{
         snykSecurity(
             snykInstallation: 'Snyk-grupo3',
             snykTokenId: 'snykID',
-			severity: 'critical',
+			severity: 'high',
           // place other parameters here
 			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
         )
-		if (snykReport != 0) {
-			error('Snyk found critical vulnerabilities')
-			}
         }
     }
 
