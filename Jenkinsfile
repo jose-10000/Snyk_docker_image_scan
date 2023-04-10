@@ -6,7 +6,7 @@ pipeline{
 		DockerImage = ''
 		GITHUB_CREDENTIALS=credentials('github-jenkins')
 		ISSUE_TITLE = "$JOB_NAME $BUILD_DISPLAY_NAME falló"
-		NPM_ISSUE_FILE = "/tmp/npm_audit_report.txt"
+		NPM_REPORT_FILE = "/tmp/npm_audit_report.txt"
 		URL_REPO = "https://github.com/jose-10000/Snyk_docker_image_scan.git"
 	//	SNYK_TOKEN=credentials('snykID') si usas esto da error
 	}
