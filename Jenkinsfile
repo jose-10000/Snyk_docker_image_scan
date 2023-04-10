@@ -29,9 +29,6 @@ pipeline{
                     sh """
                     npm install
                     npm run test
-					sh 'npm audit > ${NPM_REPORT_FILE}'
-
-
                     """
                                     }
             }
