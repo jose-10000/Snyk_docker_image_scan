@@ -52,13 +52,13 @@ pipeline{
 		stage('NPM_Audit'){
 
 		steps{
-			sh 'npm audit > ${NPM_REPORT_FILE}'
+			sh 'npm audit > /tmp/npm_audit_report.txt'
             withCredentials([
                 usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
             ]){
                 sh """
                 echo ${GIT_TOKEN} | gh auth login --with-token
-                gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+                gh issue create -t '${ISSUE_TITLE}' -F /tmp/npm_audit_report.txt -R ${URL_REPO}
 				echo 'Se ha creado un issue en el repositorio'
                 """
 			
