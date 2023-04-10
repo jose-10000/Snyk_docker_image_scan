@@ -52,7 +52,7 @@ pipeline{
         always {
         // Se eliminan las imagenes creadas
             echo 'Se elimina la imagen creada'
-            sh "docker rmi $REGISTRY:v1.$BUILD_NUMBER"
+            sh "docker rmi jose10000/devscanned-g3:v1.$BUILD_NUMBER"
         }
     }
 }
