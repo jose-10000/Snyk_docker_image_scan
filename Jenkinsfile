@@ -6,7 +6,7 @@ pipeline{
 		DockerImage = ''
 		GITHUB_CREDENTIALS=credentials('github-jenkins')
 		ISSUE_TITLE = "$JOB_NAME $BUILD_DISPLAY_NAME falló"
-		NPM_REPORT_FILE = "/tmp/npm_audit_report.txt"
+		NPM_REPORT_FILE = "npm_audit_report.txt"
 		URL_REPO = "https://github.com/jose-10000/Snyk_docker_image_scan.git"
 	//	SNYK_TOKEN=credentials('snykID') si usas esto da error
 	}
@@ -28,29 +28,35 @@ pipeline{
                     echo 'Realizando test antes de crear la imagen'
                     sh """
                     npm install
-					npm audit
                     npm run test
-
                     """
                                     }
             }
-//            post{
-//                failure {
-//                    nodejs(nodeJSInstallationName: 'node-18-15'){
-//                        sh 'npm audit > ${NPM_REPORT_FILE}'
-//                        withCredentials([
-//                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
-//                        ]){
-//                            sh """
-//                            echo ${GIT_TOKEN} | gh auth login --with-token
-//                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
-//							echo 'Se ha creado un issue en el repositorio'
-//                            """
-//                        }    
-//                    }
-//                }
-//        }
+
         }
+		stage('npm audit') {
+			steps {
+				echo 'Realizando npm audit'
+				sh 'npm audit > ${NPM_REPORT_FILE}'
+
+				post{
+						failure{
+							echo 'npm audit falló'
+							sh 'cat ${NPM_REPORT_FILE}'
+							withCredentials([
+                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
+                        ]){
+                            sh """
+                            echo ${GIT_TOKEN} | gh auth login --with-token
+                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+							echo 'Se ha creado un issue en el repositorio'
+                            """
+						}
+					}
+
+				}
+			}
+		}
 		stage('Push issue to github'){
 		
 		steps{
@@ -59,7 +65,7 @@ pipeline{
             ]){
                 sh """
                 echo ${GIT_TOKEN} | gh auth login --with-token
-                gh issue create -t '${ISSUE_TITLE}' -F /tmp/npm_audit_report.txt -R ${URL_REPO}
+                gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
 				echo 'Se ha creado un issue en el repositorio'
                 """
 			
@@ -111,6 +117,11 @@ pipeline{
             echo 'Se elimina la imagen creada'
             sh "docker rmi $REGISTRY"
 
+
+        }
+}
+}
+
 //		script {
 //                   properties([[$class: 'GithubProjectProperty',
 //                   projectUrlStr: 'https://github.com/clarity-h2020/simple-table-component']])
@@ -120,11 +131,6 @@ pipeline{
 //                   issueReopen: false,
 //                   issueLabel: 'CI',
 //                   issueTitle: '$JOB_NAME $BUILD_DISPLAY_NAME failed'])
-        }
-}
-}
-
-
 // {
 //		nodejs(nodeJSInstallationName: 'node-18-15'){
 //       sh 'npm audit > ${NPM_REPORT_FILE}'
@@ -139,3 +145,19 @@ pipeline{
 //		}
 //	}
 //
+//            post{
+//                failure {
+//                    nodejs(nodeJSInstallationName: 'node-18-15'){
+//                        sh 'npm audit > ${NPM_REPORT_FILE}'
+//                        withCredentials([
+//                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
+//                        ]){
+//                            sh """
+//                            echo ${GIT_TOKEN} | gh auth login --with-token
+//                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+//							echo 'Se ha creado un issue en el repositorio'
+//                            """
+//                        }    
+//                    }
+//                }
+//        }
