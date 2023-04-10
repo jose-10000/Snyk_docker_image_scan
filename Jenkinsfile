@@ -25,17 +25,17 @@ pipeline{
 			}
 		}
 
- //   stage('Test') {
- //       steps {
- //       echo 'Testing...'
- //       snykSecurity(
- //           snykInstallation: 'Snyk-grupo3',
- //           snykTokenId: '$SNYK_TOKEN',
- //         // place other parameters here
-//			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
- //       )
- //       }
- //   }
+    stage('Test') {
+        steps {
+        echo 'Testing...'
+        snykSecurity(
+            snykInstallation: 'Snyk-grupo3',
+            snykTokenId: 'snykID',
+          // place other parameters here
+			additionalArguments: '--docker jose10000/devscanned-g3:v1.$BUILD_NUMBER'
+        )
+        }
+    }
 
 		stage('Login') {
 
