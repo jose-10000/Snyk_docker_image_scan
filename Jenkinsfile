@@ -34,29 +34,20 @@ pipeline{
             }
 
         }
-		stage('npm audit') {
-			steps {
+
+        stage('npm audit') {
+            steps {
 				echo 'Realizando npm audit'
-				sh 'npm audit > ${NPM_REPORT_FILE}'
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+					sh 'npm audit > ${NPM_REPORT_FILE}'
+                }
+            }
+        }
 
-				post{
-						failure{
-							echo 'npm audit falló'
-							sh 'cat ${NPM_REPORT_FILE}'
-							withCredentials([
-                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
-                        ]){
-                            sh """
-                            echo ${GIT_TOKEN} | gh auth login --with-token
-                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
-							echo 'Se ha creado un issue en el repositorio'
-                            """
-						}
-					}
 
-				}
-			}
-		}
+
+			
+		
 //		stage('Push issue to github'){
 //		
 //		steps{
@@ -116,9 +107,21 @@ pipeline{
         // Se eliminan las imagenes creadas
             echo 'Se elimina la imagen creada'
             sh "docker rmi $REGISTRY"
-
-
         }
+		failure{
+			echo 'npm audit falló'
+			sh 'cat ${NPM_REPORT_FILE}'
+			withCredentials([
+                    usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
+                ]){
+                sh """
+                echo ${GIT_TOKEN} | gh auth login --with-token
+                gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
+				echo 'Se ha creado un issue en el repositorio'
+                """
+}
+
+}
 }
 }
 
