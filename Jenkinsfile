@@ -38,7 +38,7 @@ pipeline{
         stage('npm audit') {
             steps {
 				echo 'Realizando npm audit'
-                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
 					sh 'npm audit > ${NPM_REPORT_FILE}'
                 }
             }
@@ -89,7 +89,7 @@ pipeline{
             echo 'Se elimina la imagen creada'
             sh "docker rmi $REGISTRY"
         }
-		failure{
+		unstable{
 			echo 'npm audit falló'
                 sh """
                 echo ${GITHUB_CREDENTIALS_PSW} | gh auth login --with-token
@@ -100,7 +100,7 @@ pipeline{
 
 }
 }
-}
+
 
 //		script {
 //                   properties([[$class: 'GithubProjectProperty',
