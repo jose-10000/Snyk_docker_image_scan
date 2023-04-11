@@ -24,6 +24,7 @@ pipeline{
 
 		stage('Test'){
             steps {
+				// Se instala nodeJS desde el plugin nodeJS
                 nodejs(nodeJSInstallationName: 'node-18-15'){
                     echo 'Realizando test antes de crear la imagen'
                     sh """
@@ -38,7 +39,12 @@ pipeline{
         stage('npm audit') {
             steps {
 				echo 'Realizando npm audit'
+				// Catcherror es para que, si encuentra fallos, el pipeline no se detenga
+				// y se pueda seguir con el resto de las fases
+				// https://www.jenkins.io/doc/pipeline/steps/workflow-basic-steps/#catcherror-catch-error-and-set-build-result-to-failure
+				// Aqui si se produce un error, el estado del build para a ser UNSTABLE
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+					// Y ejecuta sin parar el resto de las fases
 					sh 'npm audit > ${NPM_REPORT_FILE}'
                 }
             }
@@ -100,44 +106,3 @@ pipeline{
 
 }
 }
-
-
-//		script {
-//                   properties([[$class: 'GithubProjectProperty',
-//                   projectUrlStr: 'https://github.com/clarity-h2020/simple-table-component']])
-//               }
-//               step([$class: 'GitHubIssueNotifier',
-//                   issueAppend: true,
-//                   issueReopen: false,
-//                   issueLabel: 'CI',
-//                   issueTitle: '$JOB_NAME $BUILD_DISPLAY_NAME failed'])
-// {
-//		nodejs(nodeJSInstallationName: 'node-18-15'){
-//       sh 'npm audit > ${NPM_REPORT_FILE}'
-//       withCredentials([
-//           usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
-//       ]){
-//           sh """
-//           echo ${GIT_TOKEN} | gh auth login --with-token
-//           gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
-//			echo 'Se ha creado un issue en el repositorio'
-//           """
-//		}
-//	}
-//
-//            post{
-//                failure {
-//                    nodejs(nodeJSInstallationName: 'node-18-15'){
-//                        sh 'npm audit > ${NPM_REPORT_FILE}'
-//                        withCredentials([
-//                            usernamePassword(credentialsId: '$GITHUB_CREDENTIALS', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')
-//                        ]){
-//                            sh """
-//                            echo ${GIT_TOKEN} | gh auth login --with-token
-//                            gh issue create -t '${ISSUE_TITLE}' -F ${NPM_REPORT_FILE} -R ${URL_REPO}
-//							echo 'Se ha creado un issue en el repositorio'
-//                            """
-//                        }    
-//                    }
-//                }
-//        }
