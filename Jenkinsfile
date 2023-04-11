@@ -22,7 +22,8 @@ pipeline{
 			}
 		}
 
-		stage('Test'){
+
+		stage('NPM-test'){
             steps {
 				// Se instala nodeJS desde el plugin nodeJS
                 nodejs(nodeJSInstallationName: 'node-18-15'){
@@ -31,18 +32,18 @@ pipeline{
                     npm install
                     npm run test
                     """
-                                    }
+                }
             }
 
         }
 
-        stage('npm audit') {
+        stage('NPM-audit') {
             steps {
 				echo 'Realizando npm audit'
 				// Catcherror es para que, si encuentra fallos, el pipeline no se detenga
 				// y se pueda seguir con el resto de las fases
 				// https://www.jenkins.io/doc/pipeline/steps/workflow-basic-steps/#catcherror-catch-error-and-set-build-result-to-failure
-				// Aqui si se produce un error, el estado del build para a ser UNSTABLE
+				// Aqui si se produce un error, el estado del build pasa a ser UNSTABLE
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
 					// Y ejecuta sin parar el resto de las fases
 					sh 'npm audit > ${NPM_REPORT_FILE}'
@@ -50,7 +51,9 @@ pipeline{
             }
         }
 
-		stage('Build') {
+		// Se crea la imagen
+		// Dockek se instalo en el servidor de Jenkins
+		stage('Docker-build') {
 
 			steps {
 				echo 'Building..'
@@ -58,7 +61,8 @@ pipeline{
 			}
 		}
 
-    stage('Scan') {
+	// Para poder usar snyk, hay que instalar el plugin de snyk
+    stage('Snyk-Security-Scan') {
         steps {
         echo 'Testing...'
         snykSecurity(
@@ -70,17 +74,18 @@ pipeline{
           // place other parameters here
 			additionalArguments: '--docker $REGISTRY'
         )
+		echo $? // 0 si no hay fallos, 1 si hay fallos
         }
     }
 
-		stage('Login') {
+		stage('Docker-login') {
 
 			steps {
 				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
 			}
 		}
 		
-		stage('Push') {
+		stage('Push2DockerHub') {
 
 			steps {
 				sh 'docker push $REGISTRY'
