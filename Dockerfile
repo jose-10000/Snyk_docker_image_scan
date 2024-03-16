@@ -1,10 +1,10 @@
-FROM node:18.14.1-alpine AS builder
+FROM node:18.19.1-alpine AS builder
 WORKDIR /app
 COPY . .
 #RUN yarn install && yarn build
 RUN npm install && npm run build
 
-FROM node:18.14.1-alpine
+FROM node:18.19.1-alpine
 WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
